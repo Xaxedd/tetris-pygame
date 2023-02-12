@@ -2,12 +2,10 @@ import pygame
 
 from pygame_utils import PygameScreen, Colors
 from tech_utils import Tech
-
-screen_width = 600
-screen_height = 900
+from user_settings import Settings
 
 pygame.init()
-screen = PygameScreen(screen_width, screen_height, 10, 20)
+screen = PygameScreen(Settings.screen_width, Settings.screen_height, Settings.horizontal_blocks_amount, Settings.vertical_blocks_amount)
 
 screen.color_screen_grey()
 screen.refresh_screen()
