@@ -1,23 +1,11 @@
-from dataclasses import dataclass
 from typing import List
+from random import randint
 
 import pygame
 
-
-@dataclass
-class Colors:
-    black = [0, 0, 0]
-    white = [255, 255, 255]
-    grey = [142, 147, 156]
-    yellow = [230, 172, 37]
-
-
-@dataclass
-class MapBlock:
-    x: int
-    y: int
-    color: List[int]
-    screen_pos: pygame.Rect
+from classes.blocks import MapBlock
+from classes.colors import Colors
+from user_settings import Settings
 
 
 class PygameScreen:
@@ -27,13 +15,15 @@ class PygameScreen:
         self.blocks_horizontally = blocks_horizontally
         self.blocks_vertically = blocks_vertically
         self.screen = pygame.display.set_mode([self.screen_width, self.screen_height])
-        self.map_height = self.screen_height - 200
+        self.map_height = self.screen_height - 300
         self.map_width = self.map_height/2
         self.padding_horizontal = (self.screen_width - self.map_width) / 2
         self.padding_vertical = (self.screen_height - self.map_height) / 2
         self.block_height = 0
         self.block_width = 0
         self.map_blocks: List[MapBlock] = []
+        self.obstacles: List[MapBlock] = []
+        self.falling_block: List[MapBlock] = []
 
     def color_screen_white(self):
         self.screen.fill(Colors.white)
@@ -82,26 +72,43 @@ class PygameScreen:
         self.draw_map_inside()
         self.refresh_screen()
 
-    def get_map_blocks(self):
-        for y in range(self.blocks_vertically):
+    def create_map_blocks(self):
+        for y in range(-3, self.blocks_vertically):
             for x in range(self.blocks_horizontally):
-                self.map_blocks.append(MapBlock(x=x, y=y, color=Colors.white,
-                                                screen_pos=pygame.Rect(self.padding_horizontal + x*self.block_width+1,
-                                                                       self.padding_vertical + y*self.block_height + 1,
-                                                                       self.block_width-1,
-                                                                       self.block_height-1)))
+                if y < 0:
+                    self.map_blocks.append(MapBlock(x=x, y=y, color=Settings.background_color))
+                else:
+                    self.map_blocks.append(MapBlock(x=x, y=y, color=Settings.map_color,))
         print(self.map_blocks)
 
-    def test_squares_fillings(self):
+    def draw_squares(self):
         for rect in self.map_blocks:
             pygame.draw.rect(surface=self.screen,
-                             color=Colors.yellow,
-                             rect=rect.screen_pos)
-            print("drawing")
-        self.refresh_screen()
-
-    def draw_squares(self, map_blocks):
-        for rect in map_blocks:
+                             color=rect.color,
+                             rect=pygame.Rect(self.padding_horizontal + rect.x * self.block_width + 1,
+                                              self.padding_vertical + rect.y * self.block_height + 1,
+                                              self.block_width - 1,
+                                              self.block_height - 1))
+        for rect in self.obstacles:
             pygame.draw.rect(surface=self.screen,
                              color=rect.color,
-                             rect=rect.screen_pos)
+                             rect=pygame.Rect(self.padding_horizontal + rect.x * self.block_width + 1,
+                                              self.padding_vertical + rect.y * self.block_height + 1,
+                                              self.block_width - 1,
+                                              self.block_height - 1))
+        for rect in self.falling_block:
+            pygame.draw.rect(surface=self.screen,
+                             color=rect.color,
+                             rect=pygame.Rect(self.padding_horizontal + rect.x * self.block_width + 1,
+                                              self.padding_vertical + rect.y * self.block_height + 1,
+                                              self.block_width - 1,
+                                              self.block_height - 1))
+
+    def spawn_random_block(self):
+        value = randint(1, 1)
+        print(value)
+        if value == 1:
+            blocks_to_change = list(range(round(self.blocks_horizontally/2)-2, round(self.blocks_horizontally/2)+2))
+            self.falling_block = []
+            for i in blocks_to_change:
+                self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.light_blue))
