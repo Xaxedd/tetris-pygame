@@ -22,28 +22,28 @@ while True:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
             min_x = Tech.get_piece_min_x(screen.falling_block)
             if min_x > 0:
-                for block in screen.falling_block:
-                    block.x -= 1
+                if not Tech.is_there_block_on_the_left_piece(screen.falling_block, screen.obstacles):
+                    for block in screen.falling_block:
+                        block.x -= 1
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
             max_x = Tech.get_piece_max_x(screen.falling_block)
             if max_x < Settings.horizontal_blocks_amount-1:
-                for block in screen.falling_block:
-                    block.x += 1
+                if not Tech.is_there_block_on_the_right_piece(screen.falling_block, screen.obstacles):
+                    for block in screen.falling_block:
+                        block.x += 1
 
-    if iteration % 5 == 0:
-        print("essa")
+    if iteration % 10 == 0:
         max_y = Tech.get_piece_max_y(screen.falling_block)
         if max_y < Settings.vertical_blocks_amount - 1:
-            blocks_on_max_y = Tech.get_xs_of_max_y_piece(screen.falling_block, max_y)
-            if not Tech.check_if_there_is_block_under(screen.obstacles, blocks_on_max_y, max_y):
+            if not Tech.is_there_block_under_piece(screen.falling_block, screen.obstacles):
                 for block in screen.falling_block:
                     block.y += 1
             else:
                 for block in screen.falling_block:
                     screen.obstacles.append(block)
                 screen.spawn_random_block()
-        if max_y == Settings.vertical_blocks_amount - 1:
+        elif max_y == Settings.vertical_blocks_amount - 1:
             for block in screen.falling_block:
                 screen.obstacles.append(block)
             screen.spawn_random_block()
@@ -52,7 +52,6 @@ while True:
     screen.refresh_screen()
     fps_clock.tick(max_fps)
     iteration += 1
-    print(iteration)
 
 
 
