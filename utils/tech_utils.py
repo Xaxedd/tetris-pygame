@@ -27,27 +27,21 @@ class Tech:
         return sorted(piece, key=lambda x: x.x)[-1].x
 
     @classmethod
-    def is_there_block_under_piece(cls, piece, obstacle_list):
-        blocks_to_check = cls.piece_blocks_visible_from(piece, Side.BOTTOM)
-        for block in blocks_to_check:
-            if cls.check_if_is_block_under(obstacle_list, block.x, block.y):
-                return True
-        return False
+    def is_there_block_on_the_side_of_piece(cls, piece, side: Side, obstacle_list):
+        blocks_to_check = cls.piece_blocks_visible_from(piece, side)
 
-    @classmethod
-    def is_there_block_on_the_left_piece(cls, piece, obstacle_list):
-        blocks_to_check = cls.piece_blocks_visible_from(piece, Side.LEFT)
-        for block in blocks_to_check:
-            if cls.check_if_is_block_on_the_left(obstacle_list, block.x, block.y):
-                return True
-        return False
-
-    @classmethod
-    def is_there_block_on_the_right_piece(cls, piece, obstacle_list):
-        blocks_to_check = cls.piece_blocks_visible_from(piece, Side.RIGHT)
-        for block in blocks_to_check:
-            if cls.check_if_is_block_on_the_right(obstacle_list, block.x, block.y):
-                return True
+        if side is Side.BOTTOM:
+            for block in blocks_to_check:
+                if cls.check_if_is_block_under(obstacle_list, block.x, block.y):
+                    return True
+        elif side is Side.LEFT:
+            for block in blocks_to_check:
+                if cls.check_if_is_block_on_the_left(obstacle_list, block.x, block.y):
+                    return True
+        elif side is Side.RIGHT:
+            for block in blocks_to_check:
+                if cls.check_if_is_block_on_the_right(obstacle_list, block.x, block.y):
+                    return True
         return False
 
     @classmethod
@@ -66,14 +60,6 @@ class Tech:
                 if not cls.check_if_is_block_on_the_right(piece, x=block.x, y=block.y):
                     blocks_to_check.append(block)
         return blocks_to_check
-
-    @staticmethod
-    def get_xs_of_max_y_piece(piece: List[MapBlock], y):
-        xxx = []
-        for block in piece:
-            if block.y == y:
-                xxx.append(block.x)
-        return xxx
 
     @staticmethod
     def check_if_is_block_under(obstacles_list, x, y):
