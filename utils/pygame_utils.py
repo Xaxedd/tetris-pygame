@@ -105,10 +105,53 @@ class PygameScreen:
                                               self.block_height - 1))
 
     def spawn_random_block(self):
-        value = randint(1, 1)
-        print(value)
+        self.falling_block = []
+
+        value = randint(1, 7)
         if value == 1:
             blocks_to_change = list(range(round(self.blocks_horizontally/2)-2, round(self.blocks_horizontally/2)+2))
-            self.falling_block = []
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.light_blue))
+
+        if value == 2:
+            blocks_to_change = list(range(round(self.blocks_horizontally/2)-2, round(self.blocks_horizontally/2)+1))
+            for i in blocks_to_change:
+                self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.orange))
+            self.falling_block.append(MapBlock(x=blocks_to_change[-1], y=-3, color=Colors.orange))
+
+        if value == 3:
+            blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2) + 1))
+            for i in blocks_to_change:
+                self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.dark_blue))
+            self.falling_block.append(MapBlock(x=blocks_to_change[0], y=-3, color=Colors.dark_blue))
+
+        if value == 4:
+            blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2)))
+            for i in blocks_to_change:
+                self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.lime))
+
+            blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 1, round(self.blocks_horizontally / 2)+1))
+            for i in blocks_to_change:
+                self.falling_block.append(MapBlock(x=i, y=-3, color=Colors.lime))
+
+        if value == 5:
+            blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2)))
+            for i in blocks_to_change:
+                self.falling_block.append(MapBlock(x=i, y=-3, color=Colors.red))
+
+            blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 1, round(self.blocks_horizontally / 2)+1))
+            for i in blocks_to_change:
+                self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.red))
+
+        if value == 6:
+            blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2) + 1))
+            for i in blocks_to_change:
+                self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.pink))
+            self.falling_block.append(MapBlock(x=blocks_to_change[1], y=-3, color=Colors.pink))
+
+        if value == 7:
+            blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 1, round(self.blocks_horizontally / 2) + 1))
+            for i in blocks_to_change:
+                self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.yellow))
+            for i in blocks_to_change:
+                self.falling_block.append(MapBlock(x=i, y=-3, color=Colors.yellow))
