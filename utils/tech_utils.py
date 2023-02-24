@@ -3,6 +3,7 @@ from typing import List
 import pygame
 
 from classes.blocks import MapBlock, Side
+from user_settings import Settings
 
 
 class Tech:
@@ -87,4 +88,27 @@ class Tech:
             if block.x == x + 1:
                 if block.y == y:
                     return True
+        return False
+
+    @staticmethod
+    def is_piece_inside_obstacles(obstacles: List[MapBlock], piece: List[MapBlock]):
+        for piece_block in piece:
+            for block in obstacles:
+                if piece_block.x == block.x and piece_block.y == block.y:
+                    return True
+        return False
+
+    @staticmethod
+    def is_piece_out_of_bounds(piece):
+        min_x = Tech.get_piece_min_x(piece)
+        if min_x < 0:
+            return True
+
+        max_x = Tech.get_piece_max_x(piece)
+        if max_x > Settings.horizontal_blocks_amount-1:
+            return True
+
+        max_y = Tech.get_piece_max_y(piece)
+        if max_y > Settings.vertical_blocks_amount-1:
+            return True
         return False

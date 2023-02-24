@@ -237,6 +237,7 @@ class PygameScreen:
 
     def rotate_piece_90_degrees(self, times: RotationType):
         falling_block_color = self.falling_block[0].color
+        old_falling_block = self.falling_block
         self.falling_block = []
         temp_list = []
         cord_list = sorted(self.rotate_grid, key=lambda x: (x.y, x.x))
@@ -270,8 +271,11 @@ class PygameScreen:
         for index, block in enumerate(colors_list):
             if block == falling_block_color:
                 self.falling_block.append(MapBlock(x=yyy[index][0], y=yyy[index][1], color=falling_block_color))
-        for index, color in enumerate(colors_list):
-            if color == falling_block_color:
-                self.rotate_grid[index].color = color
-            else:
-                self.rotate_grid[index].color = Colors.white
+        if Tech.is_piece_inside_obstacles(self.obstacles, self.falling_block) or Tech.is_piece_out_of_bounds(self.falling_block):
+            self.falling_block = old_falling_block
+        else:
+            for index, color in enumerate(colors_list):
+                if color == falling_block_color:
+                    self.rotate_grid[index].color = color
+                else:
+                    self.rotate_grid[index].color = Colors.white
