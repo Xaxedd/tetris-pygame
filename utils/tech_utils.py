@@ -19,6 +19,10 @@ class Tech:
         return sorted(piece, key=lambda x: x.y, reverse=True)[0].y
 
     @staticmethod
+    def get_piece_min_y(piece):
+        return sorted(piece, key=lambda x: x.y, reverse=True)[-1].y
+
+    @staticmethod
     def get_piece_min_x(piece):
         return sorted(piece, key=lambda x: x.x)[0].x
 

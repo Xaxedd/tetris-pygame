@@ -3,9 +3,10 @@ from random import randint
 
 import pygame
 
-from classes.blocks import MapBlock
+from classes.blocks import MapBlock, RotateGridBlock, RotationType
 from classes.colors import Colors
 from user_settings import Settings
+from utils.tech_utils import Tech
 
 
 class PygameScreen:
@@ -24,6 +25,7 @@ class PygameScreen:
         self.map_blocks: List[MapBlock] = []
         self.obstacles: List[MapBlock] = []
         self.falling_block: List[MapBlock] = []
+        self.rotate_grid: List[RotateGridBlock] = []
 
     def color_screen_white(self):
         self.screen.fill(Colors.white)
@@ -99,26 +101,59 @@ class PygameScreen:
 
     def spawn_random_block(self):
         self.falling_block = []
+        self.rotate_grid = []
 
         value = randint(1, 7)
-        if value == 1:
+        if value == 1: #long 4 block
             blocks_to_change = list(range(round(self.blocks_horizontally/2)-2, round(self.blocks_horizontally/2)+2))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.light_blue))
 
-        if value == 2:
+            for y in range(0, 4):
+                for x in range(0, 4):
+                    grid_block = RotateGridBlock(x=x, y=y, color=None, map_x=list(range(round(self.blocks_horizontally/2)-2, round(self.blocks_horizontally/2)+2))[x], map_y=y-4)
+                    if y == 2:
+                        grid_block.color = Colors.light_blue
+                    else:
+                        grid_block.color = Colors.white
+                    self.rotate_grid.append(grid_block)
+
+
+        if value == 2: #orange L
             blocks_to_change = list(range(round(self.blocks_horizontally/2)-2, round(self.blocks_horizontally/2)+1))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.orange))
             self.falling_block.append(MapBlock(x=blocks_to_change[-1], y=-3, color=Colors.orange))
 
-        if value == 3:
+            for y in range(3):
+                for x in range(3):
+                    grid_block = RotateGridBlock(x=x, y=y, color=None, map_x=list(range(round(self.blocks_horizontally/2)-2, round(self.blocks_horizontally/2)+1))[x], map_y=y-3)
+                    if y == 1:
+                        grid_block.color = Colors.orange
+                    elif y == 0 and x == 2:
+                        grid_block.color = Colors.orange
+                    else:
+                        grid_block.color = Colors.white
+                    self.rotate_grid.append(grid_block)
+
+        if value == 3: #dark blue L
             blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2) + 1))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.dark_blue))
             self.falling_block.append(MapBlock(x=blocks_to_change[0], y=-3, color=Colors.dark_blue))
 
-        if value == 4:
+            for y in range(3):
+                for x in range(3):
+                    grid_block = RotateGridBlock(x=x, y=y, color=None, map_x=list(range(round(self.blocks_horizontally/2)-2, round(self.blocks_horizontally/2)+1))[x], map_y=y-3)
+                    if y == 1:
+                        grid_block.color = Colors.dark_blue
+                    elif y == 0 and x == 0:
+                        grid_block.color = Colors.dark_blue
+                    else:
+                        grid_block.color = Colors.white
+                    self.rotate_grid.append(grid_block)
+
+        if value == 4: #lime Z
             blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2)))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.lime))
@@ -127,7 +162,20 @@ class PygameScreen:
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-3, color=Colors.lime))
 
-        if value == 5:
+            for y in range(3):
+                for x in range(3):
+                    grid_block = RotateGridBlock(x=x, y=y, color=None, map_x=list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2)+1))[x], map_y=y-3)
+
+                    if y == 0 and x > 0:
+                        grid_block.color = Colors.lime
+                    elif y == 1 and x < 2:
+                        grid_block.color = Colors.lime
+                    else:
+                        grid_block.color = Colors.white
+                    self.rotate_grid.append(grid_block)
+
+
+        if value == 5: #red Z
             blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2)))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-3, color=Colors.red))
@@ -136,15 +184,94 @@ class PygameScreen:
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.red))
 
-        if value == 6:
+            for y in range(3):
+                for x in range(3):
+                    grid_block = RotateGridBlock(x=x, y=y, color=None, map_x=list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2) + 1))[x], map_y=y - 3)
+
+                    if y == 0 and x < 2:
+                        grid_block.color = Colors.red
+                    elif y == 1 and x > 0:
+                        grid_block.color = Colors.red
+                    else:
+                        grid_block.color = Colors.white
+                    self.rotate_grid.append(grid_block)
+
+        if value == 6: #pink T
             blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2) + 1))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.pink))
             self.falling_block.append(MapBlock(x=blocks_to_change[1], y=-3, color=Colors.pink))
 
-        if value == 7:
+            for y in range(3):
+                for x in range(3):
+                    grid_block = RotateGridBlock(x=x, y=y, color=None, map_x=list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2) + 1))[x], map_y=y - 3)
+
+                    if y == 0 and x == 1:
+                        grid_block.color = Colors.pink
+                    elif y == 1:
+                        grid_block.color = Colors.pink
+                    else:
+                        grid_block.color = Colors.white
+                    self.rotate_grid.append(grid_block)
+
+        if value == 7: #yellow square
             blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 1, round(self.blocks_horizontally / 2) + 1))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.yellow))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-3, color=Colors.yellow))
+
+            for y in range(2):
+                for x in range(2):
+                    grid_block = RotateGridBlock(x=x, y=y, color=Colors.yellow, map_x=list(range(round(self.blocks_horizontally / 2) - 1, round(self.blocks_horizontally / 2) + 1))[x], map_y=y - 3)
+                    self.rotate_grid.append(grid_block)
+
+    def rotate_piece_clockwise(self):
+        self.rotate_piece_90_degrees(RotationType.CLOCKWISE)
+
+    def rotate_piece_counter_clockwise(self):
+        self.rotate_piece_90_degrees(RotationType.COUNTERCLOCKWISE)
+
+    def rotate_piece_flip(self):
+        self.rotate_piece_90_degrees(RotationType.FLIP)
+
+    def rotate_piece_90_degrees(self, times: RotationType):
+        falling_block_color = self.falling_block[0].color
+        self.falling_block = []
+        temp_list = []
+        cord_list = sorted(self.rotate_grid, key=lambda x: (x.y, x.x))
+        yyy = []
+        for block in cord_list:
+            yyy.append([block.map_x, block.map_y])
+
+        max_x = Tech.get_piece_max_x(self.rotate_grid)
+        max_y = Tech.get_piece_max_y(self.rotate_grid)
+        iteration = 0
+        for i in range(max_y+1):
+            xxx = []
+            for j in range(max_x+1):
+                xxx.append(self.rotate_grid[iteration].color)
+                iteration += 1
+            temp_list.append(xxx)
+        N = len(temp_list[0])
+        for rotate in range(times.value):
+            for i in range(N // 2):
+                for j in range(i, N - i - 1):
+                    temp = temp_list[i][j]
+                    temp_list[i][j] = temp_list[N - 1 - j][i]
+                    temp_list[N - 1 - j][i] = temp_list[N - 1 - i][N - 1 - j]
+                    temp_list[N - 1 - i][N - 1 - j] = temp_list[j][N - 1 - i]
+                    temp_list[j][N - 1 - i] = temp
+
+        colors_list = []
+        for y in temp_list:
+            for x in y:
+                colors_list.append(x)
+        for index, block in enumerate(colors_list):
+            if block == falling_block_color:
+                self.falling_block.append(MapBlock(x=yyy[index][0], y=yyy[index][1], color=falling_block_color))
+        for index, color in enumerate(colors_list):
+            if color == falling_block_color:
+                self.rotate_grid[index].color = color
+            else:
+                self.rotate_grid[index].color = Colors.white
