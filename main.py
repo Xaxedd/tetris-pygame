@@ -70,6 +70,17 @@ while True:
             screen.falling_block = screen.piece_shadow
             skip_iterations = True
 
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_LSHIFT:
+            if not screen.changed_pieces:
+                if screen.saved_piece_name is None:
+                    screen.saved_piece_name = screen.falling_piece_name
+                    screen.spawn_random_block()
+                else:
+                    temp = screen.saved_piece_name
+                    screen.saved_piece_name = screen.falling_piece_name
+                    screen.spawn_piece(temp)
+                screen.changed_pieces = True
+
     if iteration % amount_of_iterations == 0 or skip_iterations:
         max_y = Tech.get_piece_max_y(screen.falling_block)
         if max_y < Settings.vertical_blocks_amount - 1:
@@ -81,9 +92,11 @@ while True:
             else:
                 add_falling_block_to_obstacles()
                 screen.spawn_random_block()
+                screen.changed_pieces = False
         elif max_y == Settings.vertical_blocks_amount - 1:
             add_falling_block_to_obstacles()
             screen.spawn_random_block()
+            screen.changed_pieces = False
 
         if len(screen.obstacles) > Settings.horizontal_blocks_amount:
             screen.try_to_delete_full_lines()
@@ -93,7 +106,3 @@ while True:
     screen.refresh_screen()
     fps_clock.tick(max_fps)
     iteration += 1
-
-
-
-
