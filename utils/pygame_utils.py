@@ -1,9 +1,10 @@
+import copy
 from typing import List
 from random import randint
 
 import pygame
 
-from classes.blocks import MapBlock, RotateGridBlock, RotationType
+from classes.blocks import MapBlock, RotateGridBlock, RotationType, Side
 from classes.colors import Colors
 from user_settings import Settings
 from utils.tech_utils import Tech
@@ -26,6 +27,9 @@ class PygameScreen:
         self.obstacles: List[MapBlock] = []
         self.falling_block: List[MapBlock] = []
         self.rotate_grid: List[RotateGridBlock] = []
+        self.piece_shadow: List[MapBlock] = []
+        self.lines_cleared = 0
+        self.font = pygame.font.SysFont('Arial', 18)
 
     def color_screen_white(self):
         self.screen.fill(Colors.white)
@@ -67,6 +71,12 @@ class PygameScreen:
         pygame.draw.line(self.screen, Colors.yellow, (self.padding_horizontal, self.screen_height - self.padding_vertical), (self.screen_width - self.padding_horizontal, self.screen_height - self.padding_vertical), 3)
         pygame.draw.line(self.screen, Colors.yellow, (self.padding_horizontal, self.padding_vertical), (self.screen_width - self.padding_horizontal, self.padding_vertical), 3)
 
+    def draw_lines_cleared_text(self):
+        text_surface = self.font.render(f'Lines Cleared: {self.lines_cleared}', True, Colors.black)
+        pygame.draw.rect(self.screen, Colors.grey, pygame.Rect(self.padding_horizontal - 135, self.screen_height - self.padding_vertical - 200, text_surface.get_width(), text_surface.get_height()))
+        self.screen.blit(text_surface, (self.padding_horizontal - 135, self.screen_height - self.padding_vertical - 200))
+        self.refresh_screen()
+
     def create_map_blocks(self):
         for y in range(-3, self.blocks_vertically):
             for x in range(self.blocks_horizontally):
@@ -91,6 +101,15 @@ class PygameScreen:
                                               self.padding_vertical + rect.y * self.block_height + 1,
                                               self.block_width - 1,
                                               self.block_height - 1))
+
+        for rect in self.piece_shadow:
+            pygame.draw.rect(surface=self.screen,
+                             color=Colors.light_grey,
+                             rect=pygame.Rect(self.padding_horizontal + rect.x * self.block_width + 1,
+                                              self.padding_vertical + rect.y * self.block_height + 1,
+                                              self.block_width - 1,
+                                              self.block_height - 1))
+
         for rect in self.falling_block:
             pygame.draw.rect(surface=self.screen,
                              color=rect.color,
@@ -279,3 +298,36 @@ class PygameScreen:
                     self.rotate_grid[index].color = color
                 else:
                     self.rotate_grid[index].color = Colors.white
+
+    def get_piece_shadow(self):
+        self.piece_shadow = copy.deepcopy(self.falling_block)
+        while True:
+            if Tech.is_there_block_on_the_side_of_piece(self.piece_shadow, Side.BOTTOM, self.obstacles) or Tech.get_piece_max_y(self.piece_shadow) >= Settings.vertical_blocks_amount - 1:
+                break
+            for block in self.piece_shadow:
+                block.y += 1
+
+    def try_to_delete_full_lines(self):
+        sorted_obstacles = sorted(self.obstacles, key=lambda x: (x.y, x.x))
+        amount_of_obstacles_in_line = 0
+        to_delete = []
+        current_y = sorted_obstacles[0].y
+
+        for block in sorted_obstacles:
+            if block.y != current_y:
+                current_y = block.y
+                amount_of_obstacles_in_line = 0
+            amount_of_obstacles_in_line += 1
+
+            if amount_of_obstacles_in_line == Settings.horizontal_blocks_amount:
+                self.lines_cleared += 1
+                self.draw_lines_cleared_text()
+                for index, obstacle in enumerate(self.obstacles):
+                    if obstacle.y == current_y:
+                        to_delete.append(index)
+                    if obstacle.y < current_y:
+                        obstacle.y += 1
+
+        to_delete.sort()
+        for item in reversed(to_delete):
+            self.obstacles.pop(item)
