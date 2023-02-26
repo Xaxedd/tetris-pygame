@@ -1,9 +1,10 @@
+import copy
 from typing import List
 from random import randint
 
 import pygame
 
-from classes.blocks import MapBlock, RotateGridBlock, RotationType
+from classes.blocks import MapBlock, RotateGridBlock, RotationType, Side
 from classes.colors import Colors
 from user_settings import Settings
 from utils.tech_utils import Tech
@@ -26,6 +27,7 @@ class PygameScreen:
         self.obstacles: List[MapBlock] = []
         self.falling_block: List[MapBlock] = []
         self.rotate_grid: List[RotateGridBlock] = []
+        self.piece_shadow: List[MapBlock] = []
 
     def color_screen_white(self):
         self.screen.fill(Colors.white)
@@ -91,6 +93,15 @@ class PygameScreen:
                                               self.padding_vertical + rect.y * self.block_height + 1,
                                               self.block_width - 1,
                                               self.block_height - 1))
+
+        for rect in self.piece_shadow:
+            pygame.draw.rect(surface=self.screen,
+                             color=Colors.light_grey,
+                             rect=pygame.Rect(self.padding_horizontal + rect.x * self.block_width + 1,
+                                              self.padding_vertical + rect.y * self.block_height + 1,
+                                              self.block_width - 1,
+                                              self.block_height - 1))
+
         for rect in self.falling_block:
             pygame.draw.rect(surface=self.screen,
                              color=rect.color,
@@ -279,3 +290,11 @@ class PygameScreen:
                     self.rotate_grid[index].color = color
                 else:
                     self.rotate_grid[index].color = Colors.white
+
+    def get_piece_shadow(self):
+        self.piece_shadow = copy.deepcopy(self.falling_block)
+        while True:
+            if Tech.is_there_block_on_the_side_of_piece(self.piece_shadow, Side.BOTTOM, self.obstacles) or Tech.get_piece_max_y(self.piece_shadow) >= Settings.vertical_blocks_amount - 1:
+                break
+            for block in self.piece_shadow:
+                block.y += 1
