@@ -78,14 +78,13 @@ while True:
 
         if len(screen.obstacles) > Settings.horizontal_blocks_amount:
             sorted_obstacles = sorted(screen.obstacles, key=lambda x: (x.y, x.x))
-            print(sorted_obstacles)
             amount_of_obstacles_in_line = 0
             to_delete = []
             current_y = sorted_obstacles[0].y
+
             for block in sorted_obstacles:
                 if block.y != current_y:
                     current_y = block.y
-                    is_line_full = True
                     amount_of_obstacles_in_line = 0
                 amount_of_obstacles_in_line += 1
 
@@ -99,7 +98,6 @@ while True:
                             xxx.y += 1
 
             to_delete.sort()
-            print(to_delete)
             for item in reversed(to_delete):
                 screen.obstacles.pop(item)
 
