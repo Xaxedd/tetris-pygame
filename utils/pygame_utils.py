@@ -78,7 +78,7 @@ class PygameScreen:
         self.refresh_screen()
 
     def create_map_blocks(self):
-        for y in range(-3, self.blocks_vertically):
+        for y in range(-4, self.blocks_vertically):
             for x in range(self.blocks_horizontally):
                 if y < 0:
                     self.map_blocks.append(MapBlock(x=x, y=y, color=Settings.background_color))
