@@ -11,9 +11,10 @@ def add_falling_block_to_obstacles():
     for block in screen.falling_block:
         screen.obstacles.append(block)
 
-pygame.init()
-screen = PygameScreen(Settings.screen_width, Settings.screen_height, Settings.horizontal_blocks_amount, Settings.vertical_blocks_amount)
 
+pygame.init()
+pygame.font.init()
+screen = PygameScreen(Settings.screen_width, Settings.screen_height, Settings.horizontal_blocks_amount, Settings.vertical_blocks_amount)
 max_fps = 60
 fps_clock = pygame.time.Clock()
 
@@ -89,6 +90,8 @@ while True:
                 amount_of_obstacles_in_line += 1
 
                 if amount_of_obstacles_in_line == Settings.horizontal_blocks_amount:
+                    screen.lines_cleared += 1
+                    screen.draw_lines_cleared_text()
                     for index, xxx in enumerate(screen.obstacles):
                         if xxx.y == current_y:
                             to_delete.append(index)

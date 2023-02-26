@@ -28,6 +28,8 @@ class PygameScreen:
         self.falling_block: List[MapBlock] = []
         self.rotate_grid: List[RotateGridBlock] = []
         self.piece_shadow: List[MapBlock] = []
+        self.lines_cleared = 0
+        self.font = pygame.font.SysFont('Arial', 18)
 
     def color_screen_white(self):
         self.screen.fill(Colors.white)
@@ -68,6 +70,12 @@ class PygameScreen:
 
         pygame.draw.line(self.screen, Colors.yellow, (self.padding_horizontal, self.screen_height - self.padding_vertical), (self.screen_width - self.padding_horizontal, self.screen_height - self.padding_vertical), 3)
         pygame.draw.line(self.screen, Colors.yellow, (self.padding_horizontal, self.padding_vertical), (self.screen_width - self.padding_horizontal, self.padding_vertical), 3)
+
+    def draw_lines_cleared_text(self):
+        text_surface = self.font.render(f'Lines Cleared: {self.lines_cleared}', True, Colors.black)
+        pygame.draw.rect(self.screen, Colors.grey, pygame.Rect(self.padding_horizontal - 135, self.screen_height - self.padding_vertical - 200, text_surface.get_width(), text_surface.get_height()))
+        self.screen.blit(text_surface, (self.padding_horizontal - 135, self.screen_height - self.padding_vertical - 200))
+        self.refresh_screen()
 
     def create_map_blocks(self):
         for y in range(-3, self.blocks_vertically):
