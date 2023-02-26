@@ -306,3 +306,28 @@ class PygameScreen:
                 break
             for block in self.piece_shadow:
                 block.y += 1
+
+    def try_to_delete_full_lines(self):
+        sorted_obstacles = sorted(self.obstacles, key=lambda x: (x.y, x.x))
+        amount_of_obstacles_in_line = 0
+        to_delete = []
+        current_y = sorted_obstacles[0].y
+
+        for block in sorted_obstacles:
+            if block.y != current_y:
+                current_y = block.y
+                amount_of_obstacles_in_line = 0
+            amount_of_obstacles_in_line += 1
+
+            if amount_of_obstacles_in_line == Settings.horizontal_blocks_amount:
+                self.lines_cleared += 1
+                self.draw_lines_cleared_text()
+                for index, obstacle in enumerate(self.obstacles):
+                    if obstacle.y == current_y:
+                        to_delete.append(index)
+                    if obstacle.y < current_y:
+                        obstacle.y += 1
+
+        to_delete.sort()
+        for item in reversed(to_delete):
+            self.obstacles.pop(item)

@@ -77,29 +77,7 @@ while True:
             screen.spawn_random_block()
 
         if len(screen.obstacles) > Settings.horizontal_blocks_amount:
-            sorted_obstacles = sorted(screen.obstacles, key=lambda x: (x.y, x.x))
-            amount_of_obstacles_in_line = 0
-            to_delete = []
-            current_y = sorted_obstacles[0].y
-
-            for block in sorted_obstacles:
-                if block.y != current_y:
-                    current_y = block.y
-                    amount_of_obstacles_in_line = 0
-                amount_of_obstacles_in_line += 1
-
-                if amount_of_obstacles_in_line == Settings.horizontal_blocks_amount:
-                    screen.lines_cleared += 1
-                    screen.draw_lines_cleared_text()
-                    for index, xxx in enumerate(screen.obstacles):
-                        if xxx.y == current_y:
-                            to_delete.append(index)
-                        if xxx.y < current_y:
-                            xxx.y += 1
-
-            to_delete.sort()
-            for item in reversed(to_delete):
-                screen.obstacles.pop(item)
+            screen.try_to_delete_full_lines()
 
     screen.get_piece_shadow()
     screen.draw_squares()
