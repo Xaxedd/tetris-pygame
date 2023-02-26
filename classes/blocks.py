@@ -22,8 +22,17 @@ class RotateGridBlock(MapBlock):
     map_y: int
 
 
-@dataclass
 class RotationType(Enum):
     CLOCKWISE = 1
     FLIP = 2
     COUNTERCLOCKWISE = 3
+
+
+class PieceName(Enum):
+    LONG_I = 1
+    ORANGE_L = 2
+    BLUE_L = 3
+    LIME_Z = 4
+    RED_Z = 5
+    PINK_T = 6
+    SQUARE = 7

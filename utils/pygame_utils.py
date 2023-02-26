@@ -4,7 +4,7 @@ from random import randint
 
 import pygame
 
-from classes.blocks import MapBlock, RotateGridBlock, RotationType, Side
+from classes.blocks import MapBlock, RotateGridBlock, RotationType, Side, PieceName
 from classes.colors import Colors
 from user_settings import Settings
 from utils.tech_utils import Tech
@@ -30,6 +30,9 @@ class PygameScreen:
         self.piece_shadow: List[MapBlock] = []
         self.lines_cleared = 0
         self.font = pygame.font.SysFont('Arial', 18)
+        self.changed_pieces = False
+        self.falling_piece_name = None
+        self.saved_piece_name = None
 
     def color_screen_white(self):
         self.screen.fill(Colors.white)
@@ -78,7 +81,7 @@ class PygameScreen:
         self.refresh_screen()
 
     def create_map_blocks(self):
-        for y in range(-3, self.blocks_vertically):
+        for y in range(-4, self.blocks_vertically):
             for x in range(self.blocks_horizontally):
                 if y < 0:
                     self.map_blocks.append(MapBlock(x=x, y=y, color=Settings.background_color))
@@ -118,12 +121,20 @@ class PygameScreen:
                                               self.block_width - 1,
                                               self.block_height - 1))
 
-    def spawn_random_block(self):
+    def spawn_piece(self, piece_name: PieceName):
+        self.spawn_random_block(piece_name.value)
+
+    def spawn_random_block(self, prederminated_outcome=None):
         self.falling_block = []
         self.rotate_grid = []
+        self.falling_piece_name = None
 
-        value = randint(1, 7)
+        if prederminated_outcome is None:
+            value = randint(1, 7)
+        else:
+            value = prederminated_outcome
         if value == 1: #long 4 block
+            self.falling_piece_name = PieceName.LONG_I
             blocks_to_change = list(range(round(self.blocks_horizontally/2)-2, round(self.blocks_horizontally/2)+2))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.light_blue))
@@ -139,6 +150,7 @@ class PygameScreen:
 
 
         if value == 2: #orange L
+            self.falling_piece_name = PieceName.ORANGE_L
             blocks_to_change = list(range(round(self.blocks_horizontally/2)-2, round(self.blocks_horizontally/2)+1))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.orange))
@@ -156,6 +168,7 @@ class PygameScreen:
                     self.rotate_grid.append(grid_block)
 
         if value == 3: #dark blue L
+            self.falling_piece_name = PieceName.BLUE_L
             blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2) + 1))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.dark_blue))
@@ -173,6 +186,7 @@ class PygameScreen:
                     self.rotate_grid.append(grid_block)
 
         if value == 4: #lime Z
+            self.falling_piece_name = PieceName.LIME_Z
             blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2)))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.lime))
@@ -195,6 +209,7 @@ class PygameScreen:
 
 
         if value == 5: #red Z
+            self.falling_piece_name = PieceName.RED_Z
             blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2)))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-3, color=Colors.red))
@@ -216,6 +231,7 @@ class PygameScreen:
                     self.rotate_grid.append(grid_block)
 
         if value == 6: #pink T
+            self.falling_piece_name = PieceName.PINK_T
             blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 2, round(self.blocks_horizontally / 2) + 1))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.pink))
@@ -234,6 +250,7 @@ class PygameScreen:
                     self.rotate_grid.append(grid_block)
 
         if value == 7: #yellow square
+            self.falling_piece_name = PieceName.SQUARE
             blocks_to_change = list(range(round(self.blocks_horizontally / 2) - 1, round(self.blocks_horizontally / 2) + 1))
             for i in blocks_to_change:
                 self.falling_block.append(MapBlock(x=i, y=-2, color=Colors.yellow))
