@@ -14,6 +14,11 @@ def add_falling_block_to_obstacles():
         screen.obstacles.append(block)
 
 
+def did_player_lost():
+    global screen
+    return sorted(screen.obstacles, key=lambda x: x.y)[0].y < 0
+
+
 pygame.init()
 pygame.font.init()
 screen = PygameScreen(Settings.screen_width, Settings.screen_height, Settings.horizontal_blocks_amount, Settings.vertical_blocks_amount)
@@ -26,9 +31,9 @@ screen.draw_map()
 screen.create_map_blocks()
 screen.spawn_random_block()
 screen.get_piece_shadow()
-print(screen.block_height, screen.block_width)
 iteration = 0
-while True:
+running = True
+while running:
     amount_of_iterations = 40
     skip_iterations = False
 
@@ -57,6 +62,9 @@ while True:
         amount_of_iterations = 10
 
     for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            running = False
+
         if event.type == pygame.KEYDOWN and event.key == pygame.K_d:
             screen.rotate_piece_clockwise()
 
@@ -100,6 +108,10 @@ while True:
 
         if len(screen.obstacles) > Settings.horizontal_blocks_amount:
             screen.try_to_delete_full_lines()
+
+            if did_player_lost():
+                print(f"player lost. Lines cleared: {screen.lines_cleared}")
+                running = False
 
     screen.get_piece_shadow()
     screen.draw_squares()

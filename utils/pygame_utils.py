@@ -58,12 +58,10 @@ class PygameScreen:
 
     def draw_map_inside(self):
         self.block_width = self.map_width/self.blocks_horizontally
-        print("block width", self.block_width)
         for i in range(self.blocks_horizontally+1):
             pygame.draw.line(self.screen, Colors.black, (self.padding_horizontal + i*self.block_width, self.padding_vertical), (self.padding_horizontal + i*self.block_width, self.screen_height - self.padding_vertical), 1)
 
         self.block_height = self.map_height/self.blocks_vertically
-        print("block height", self.block_height)
         for i in range(self.blocks_vertically+1):
             pygame.draw.line(self.screen, Colors.black, (self.padding_horizontal, self.screen_height - self.padding_vertical - i*self.block_height), (self.screen_width - self.padding_horizontal, self.screen_height - self.padding_vertical - i*self.block_height), 1)
 
@@ -87,7 +85,6 @@ class PygameScreen:
                     self.map_blocks.append(MapBlock(x=x, y=y, color=Settings.background_color))
                 else:
                     self.map_blocks.append(MapBlock(x=x, y=y, color=Settings.map_color))
-        print(self.map_blocks)
 
     def draw_squares(self):
         for rect in self.map_blocks:
