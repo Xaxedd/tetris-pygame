@@ -28,6 +28,8 @@ fps_clock = pygame.time.Clock()
 screen.color_screen_grey()
 screen.refresh_screen()
 screen.draw_map()
+screen.draw_next_pieces_box()
+screen.draw_next_pieces()
 screen.create_map_blocks()
 screen.spawn_random_block()
 screen.get_piece_shadow()
@@ -83,7 +85,7 @@ while running:
                 if screen.saved_piece_name is None:
                     screen.saved_piece_name = screen.falling_piece_name
                     screen.draw_saved_piece()
-                    screen.spawn_random_block()
+                    screen.spawn_next_piece()
                 else:
                     temp = screen.saved_piece_name
                     screen.saved_piece_name = screen.falling_piece_name
@@ -101,11 +103,11 @@ while running:
                     block.map_y += 1
             else:
                 add_falling_block_to_obstacles()
-                screen.spawn_random_block()
+                screen.spawn_next_piece()
                 screen.changed_pieces = False
         elif max_y == Settings.vertical_blocks_amount - 1:
             add_falling_block_to_obstacles()
-            screen.spawn_random_block()
+            screen.spawn_next_piece()
             screen.changed_pieces = False
 
         if len(screen.obstacles) > Settings.horizontal_blocks_amount:
