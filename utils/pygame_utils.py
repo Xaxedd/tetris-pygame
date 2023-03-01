@@ -26,6 +26,7 @@ class PygameScreen:
         self.map_blocks: List[MapBlock] = []
         self.obstacles: List[MapBlock] = []
         self.falling_block: List[MapBlock] = []
+        self.next_pieces: List = []
         self.rotate_grid: List[RotateGridBlock] = []
         self.piece_shadow: List[MapBlock] = []
         self.lines_cleared = 0
@@ -34,6 +35,10 @@ class PygameScreen:
         self.falling_piece_name = None
         self.saved_piece_name = None
         self.saved_piece_rect = pygame.Rect(self.padding_horizontal-117, self.padding_vertical+7, 106, 93)
+        self.next_pieces_rect = pygame.Rect(self.screen_width - self.padding_horizontal+11, self.padding_vertical+7, 106, 493)
+
+        for i in range(5):
+            self.roll_new_piece()
 
     def color_screen_white(self):
         self.screen.fill(Colors.white)
@@ -49,6 +54,7 @@ class PygameScreen:
         self.draw_map_borders()
         self.draw_map_inside()
         self.draw_saved_piece_box()
+        self.draw_next_pieces_box()
 
         self.refresh_screen()
 
@@ -79,6 +85,7 @@ class PygameScreen:
         pygame.draw.line(self.screen, Colors.black, (self.padding_horizontal-120, self.padding_vertical+103), (self.padding_horizontal, self.padding_vertical+103), 7)
 
         pygame.draw.line(self.screen, Colors.black, (self.padding_horizontal-120, self.padding_vertical), (self.padding_horizontal-120, self.padding_vertical+106), 7)
+
         pygame.draw.rect(self.screen, Colors.white, self.saved_piece_rect)
 
     def draw_saved_piece(self):
@@ -111,6 +118,46 @@ class PygameScreen:
         if self.saved_piece_name is PieceName.PINK_T:
             piece_img = pygame.image.load("imgs/pink_t.png").convert()
             self.screen.blit(piece_img, (self.padding_horizontal-117+8, self.padding_vertical+7+20))
+
+    def draw_next_pieces_box(self):
+        pygame.draw.line(self.screen, Colors.black, (self.screen_width - self.padding_horizontal + 120, self.padding_vertical + 3), (self.screen_width - self.padding_horizontal, self.padding_vertical + 3), 7)
+        pygame.draw.line(self.screen, Colors.black, (self.screen_width - self.padding_horizontal + 120, self.padding_vertical + 503), (self.screen_width - self.padding_horizontal, self.padding_vertical + 503), 7)
+
+        pygame.draw.line(self.screen, Colors.black, (self.screen_width - self.padding_horizontal + 120, self.padding_vertical), (self.screen_width - self.padding_horizontal + 120, self.padding_vertical + 506), 7)
+
+        pygame.draw.rect(self.screen, Colors.white, self.next_pieces_rect)
+
+    def draw_next_pieces(self):
+        pygame.draw.rect(self.screen, Colors.white, self.next_pieces_rect)
+        for i in range(0, 5):
+            if self.next_pieces[i] is PieceName.RED_Z:
+                piece_img = pygame.image.load("imgs/red_z.png").convert()
+                self.screen.blit(piece_img, (self.screen_width - self.padding_horizontal+11 + 8, self.padding_vertical + 7 + 20 + i*100))
+
+            if self.next_pieces[i] is PieceName.LIME_Z:
+                piece_img = pygame.image.load("imgs/green_z.png").convert()
+                self.screen.blit(piece_img, (self.screen_width - self.padding_horizontal+11 + 8, self.padding_vertical + 7 + 20 + i*100))
+
+            if self.next_pieces[i] is PieceName.SQUARE:
+                piece_img = pygame.image.load("imgs/square.png").convert()
+                self.screen.blit(piece_img, (self.screen_width - self.padding_horizontal+11 + 22, self.padding_vertical + 7 + 20 + i*100))
+
+            if self.next_pieces[i] is PieceName.LONG_I:
+                piece_img = pygame.image.load("imgs/long_i.png").convert()
+                self.screen.blit(piece_img, (self.screen_width - self.padding_horizontal+11 + 3, self.padding_vertical + 7 + 35 + i*100))
+
+            if self.next_pieces[i] is PieceName.BLUE_L:
+                piece_img = pygame.image.load("imgs/blue_l.png").convert()
+                self.screen.blit(piece_img, (self.screen_width - self.padding_horizontal+11 + 8, self.padding_vertical + 7 + 20 + i*100))
+
+            if self.next_pieces[i] is PieceName.ORANGE_L:
+                piece_img = pygame.image.load("imgs/orange_l.png").convert()
+                self.screen.blit(piece_img, (self.screen_width - self.padding_horizontal+11 + 8, self.padding_vertical + 7 + 20 + i*100))
+
+            if self.next_pieces[i] is PieceName.PINK_T:
+                piece_img = pygame.image.load("imgs/pink_t.png").convert()
+                self.screen.blit(piece_img, (self.screen_width - self.padding_horizontal+11 + 8, self.padding_vertical + 7 + 20 + i*100))
+
 
     def draw_lines_cleared_text(self):
         text_surface = self.font.render(f'Lines Cleared: {self.lines_cleared}', True, Colors.black)
@@ -158,6 +205,12 @@ class PygameScreen:
                                               self.block_width - 1,
                                               self.block_height - 1))
 
+    def spawn_next_piece(self):
+        self.spawn_piece(self.next_pieces[0])
+        self.next_pieces.pop(0)
+        self.roll_new_piece()
+        self.draw_next_pieces()
+
     def spawn_piece(self, piece_name: PieceName):
         self.spawn_random_block(piece_name.value)
 
@@ -184,7 +237,6 @@ class PygameScreen:
                     else:
                         grid_block.color = Colors.white
                     self.rotate_grid.append(grid_block)
-
 
         if value == 2: #orange L
             self.falling_piece_name = PieceName.ORANGE_L
@@ -298,6 +350,23 @@ class PygameScreen:
                 for x in range(2):
                     grid_block = RotateGridBlock(x=x, y=y, color=Colors.yellow, map_x=list(range(round(self.blocks_horizontally / 2) - 1, round(self.blocks_horizontally / 2) + 1))[x], map_y=y - 3)
                     self.rotate_grid.append(grid_block)
+
+    def roll_new_piece(self):
+        value = randint(1, 7)
+        if value == 1:
+            self.next_pieces.append(PieceName.LONG_I)
+        if value == 2:
+            self.next_pieces.append(PieceName.ORANGE_L)
+        if value == 3:
+            self.next_pieces.append(PieceName.BLUE_L)
+        if value == 4:
+            self.next_pieces.append(PieceName.LIME_Z)
+        if value == 5:
+            self.next_pieces.append(PieceName.RED_Z)
+        if value == 6:
+            self.next_pieces.append(PieceName.PINK_T)
+        if value == 7:
+            self.next_pieces.append(PieceName.SQUARE)
 
     def rotate_piece_clockwise(self):
         self.rotate_piece_90_degrees(RotationType.CLOCKWISE)
