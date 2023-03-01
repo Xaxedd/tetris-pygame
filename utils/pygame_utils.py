@@ -33,6 +33,7 @@ class PygameScreen:
         self.changed_pieces = False
         self.falling_piece_name = None
         self.saved_piece_name = None
+        self.saved_piece_rect = pygame.Rect(self.padding_horizontal-117, self.padding_vertical+7, 106, 93)
 
     def color_screen_white(self):
         self.screen.fill(Colors.white)
@@ -47,6 +48,7 @@ class PygameScreen:
     def draw_map(self):
         self.draw_map_borders()
         self.draw_map_inside()
+        self.draw_saved_piece_box()
 
         self.refresh_screen()
 
@@ -71,6 +73,44 @@ class PygameScreen:
 
         pygame.draw.line(self.screen, Colors.yellow, (self.padding_horizontal, self.screen_height - self.padding_vertical), (self.screen_width - self.padding_horizontal, self.screen_height - self.padding_vertical), 3)
         pygame.draw.line(self.screen, Colors.yellow, (self.padding_horizontal, self.padding_vertical), (self.screen_width - self.padding_horizontal, self.padding_vertical), 3)
+
+    def draw_saved_piece_box(self):
+        pygame.draw.line(self.screen, Colors.black, (self.padding_horizontal-120, self.padding_vertical+3), (self.padding_horizontal, self.padding_vertical+3), 7)
+        pygame.draw.line(self.screen, Colors.black, (self.padding_horizontal-120, self.padding_vertical+103), (self.padding_horizontal, self.padding_vertical+103), 7)
+
+        pygame.draw.line(self.screen, Colors.black, (self.padding_horizontal-120, self.padding_vertical), (self.padding_horizontal-120, self.padding_vertical+106), 7)
+        pygame.draw.rect(self.screen, Colors.white, self.saved_piece_rect)
+
+    def draw_saved_piece(self):
+        pygame.draw.rect(self.screen, Colors.white, self.saved_piece_rect)
+
+        if self.saved_piece_name is PieceName.RED_Z:
+            piece_img = pygame.image.load("imgs/red_z.png").convert()
+            self.screen.blit(piece_img, (self.padding_horizontal-117+8, self.padding_vertical+7+20))
+
+        if self.saved_piece_name is PieceName.LIME_Z:
+            piece_img = pygame.image.load("imgs/green_z.png").convert()
+            self.screen.blit(piece_img, (self.padding_horizontal-117+8, self.padding_vertical+7+20))
+
+        if self.saved_piece_name is PieceName.SQUARE:
+            piece_img = pygame.image.load("imgs/square.png").convert()
+            self.screen.blit(piece_img, (self.padding_horizontal-117+22, self.padding_vertical+7+20))
+
+        if self.saved_piece_name is PieceName.LONG_I:
+            piece_img = pygame.image.load("imgs/long_i.png").convert()
+            self.screen.blit(piece_img, (self.padding_horizontal-117+3, self.padding_vertical+7+35))
+
+        if self.saved_piece_name is PieceName.BLUE_L:
+            piece_img = pygame.image.load("imgs/blue_l.png").convert()
+            self.screen.blit(piece_img, (self.padding_horizontal-117+8, self.padding_vertical+7+20))
+
+        if self.saved_piece_name is PieceName.ORANGE_L:
+            piece_img = pygame.image.load("imgs/orange_l.png").convert()
+            self.screen.blit(piece_img, (self.padding_horizontal-117+8, self.padding_vertical+7+20))
+
+        if self.saved_piece_name is PieceName.PINK_T:
+            piece_img = pygame.image.load("imgs/pink_t.png").convert()
+            self.screen.blit(piece_img, (self.padding_horizontal-117+8, self.padding_vertical+7+20))
 
     def draw_lines_cleared_text(self):
         text_surface = self.font.render(f'Lines Cleared: {self.lines_cleared}', True, Colors.black)
