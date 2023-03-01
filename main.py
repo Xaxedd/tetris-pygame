@@ -82,11 +82,13 @@ while running:
             if not screen.changed_pieces:
                 if screen.saved_piece_name is None:
                     screen.saved_piece_name = screen.falling_piece_name
+                    screen.draw_saved_piece()
                     screen.spawn_random_block()
                 else:
                     temp = screen.saved_piece_name
                     screen.saved_piece_name = screen.falling_piece_name
                     screen.spawn_piece(temp)
+                    screen.draw_saved_piece()
                 screen.changed_pieces = True
 
     if iteration % amount_of_iterations == 0 or skip_iterations:
